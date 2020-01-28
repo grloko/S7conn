@@ -7,35 +7,41 @@ var db = new Datastore({ filename: './db', autoload: true })
 
 const conn = new nodes7()
 
-conn.initiateConnection(
-  //pega as configurações no arquivo 'config.json'
-  {
-    port: config.clp.port,
-    host: config.clp.host,
-    rack: config.clp.rack,
-    slot: config.clp.slot
-  },
-  (err) => {
-    if (err) console.log(err)
-    else {
-      //caso a conexão seja bem estabelecida, começa a leitura das variáveis
-      conn.setTranslationCB((tag) => {
-        return config.variables[tag]
-      })
-      conn.addItems(Object.keys(config.variables))
-      setInterval(() => {
-        conn.readAllItems(valuesRead)
-      }, 15000)
-    }
-  }
-)
+const connInitiate = () => {
+  conn.initiateConnection(
+    //pega as configurações no arquivo 'config.json'
+    {
+      port: config.clp.port,
+      host: config.clp.host,
+      rack: config.clp.rack,
+      slot: config.clp.slot
+    },
+    connected
+  )
+}
 
-function valuesRead(err, values) {
+const connected = (err) => {
   if (err) {
-    console.log('Error reading values!')
+    console.error(err)
+    conn.dropConnection(() => setTimeout(connInitiate, 30000))
+  } else {
+    //caso a conexão seja bem estabelecida, começa a leitura das variáveis
+    conn.setTranslationCB((tag) => {
+      return config.variables[tag]
+    })
+    conn.addItems(Object.keys(config.variables))
+    setInterval(() => {
+      conn.readAllItems(valuesRead)
+    }, 15000)
+  }
+}
+
+const valuesRead = (err, values) => {
+  if (err) {
+    console.error('Error reading values!')
     process.exit()
   } else {
-    console.log('Values read from CLP.')
+    console.info('Values read from CLP.')
     let today = Date.now()
     let message = Object.assign(
       { date: dateFormat(today, 'mm/dd/yyyy-HH:MM:ss'), sent: false },
@@ -49,3 +55,22 @@ function valuesRead(err, values) {
     })
   }
 }
+
+function checkSentStatus() {
+  db.findOne({ sent: false }, (err, doc) => {
+    if (err) console.log(err.message)
+    else if (doc) {
+      console.log('Dado pendente: \n    ' + JSON.stringify(doc))
+      db.update({ _id: doc._id }, { $set: { sent: true } }, {}, (err) => {
+        if (err) console.log(err.message)
+        else {
+          //enviarDado(()=>{EXECUTAR COMANDO ABAIXO})
+          console.log('Dado enviado.')
+        }
+      })
+    } else console.log('Nenhum dado pendente!')
+  })
+}
+
+connInitiate()
+checkSentStatus()

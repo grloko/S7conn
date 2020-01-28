@@ -8,5 +8,6 @@
     "dateformat": "^3.0.3",
     "memfs": "^3.0.4",
     "nodes7": "^0.3.10"
-  }
+  },
+  "repository": "https://github.com/grloko/S7Conn"
 }

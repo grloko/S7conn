@@ -1,6 +1,5 @@
 const dateFormat = require('dateformat')
 const nodes7 = require('nodes7')
-const fs = require('fs')
 const config = require('./config.json')
 const Datastore = require('nedb')
 

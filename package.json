@@ -6,7 +6,6 @@
   "license": "MIT",
   "dependencies": {
     "dateformat": "^3.0.3",
-    "memfs": "^3.0.4",
     "nedb": "^1.8.0",
     "nodes7": "^0.3.10"
   },

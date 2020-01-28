@@ -1,10 +1,11 @@
 const dateFormat = require('dateformat')
-const config = require('./config.json')
 const nodes7 = require('nodes7')
-const Datastore = require('nedb')
 const fs = require('fs')
+const config = require('./config.json')
+const Datastore = require('nedb')
 
 var db = new Datastore({ filename: './db', autoload: true })
+
 const conn = new nodes7()
 
 conn.initiateConnection(
@@ -47,6 +48,5 @@ function valuesRead(err, values) {
         'Valores inseridos no banco de dados:\n    ' + JSON.stringify(doc)
       )
     })
-    //send(message)
   }
 }

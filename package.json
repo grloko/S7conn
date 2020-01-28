@@ -1,0 +1,12 @@
+{
+  "name": "s7conn",
+  "version": "2.0",
+  "main": "index.js",
+  "author": "Gabriel Rios",
+  "license": "MIT",
+  "dependencies": {
+    "dateformat": "^3.0.3",
+    "memfs": "^3.0.4",
+    "nodes7": "^0.3.10"
+  }
+}

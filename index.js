@@ -1,3 +1,5 @@
+'use strict'
+
 const dateFormat = require('dateformat')
 const nodes7 = require('nodes7')
 const config = require('./config.json')
@@ -49,9 +51,11 @@ const valuesRead = (err, values) => {
     )
     db.insert(message, (err, doc) => {
       if (err) console.log(err.message)
-      console.log(
-        'Valores inseridos no banco de dados:\n    ' + JSON.stringify(doc)
-      )
+      else {
+        console.log(
+          'Valores inseridos no banco de dados:\n    ' + JSON.stringify(doc)
+        )
+      }
     })
   }
 }
@@ -61,14 +65,18 @@ function checkSentStatus() {
     if (err) console.log(err.message)
     else if (doc) {
       console.log('Dado pendente: \n    ' + JSON.stringify(doc))
+      //enviarDado(()=>{EXECUTAR COMANDO ABAIXO})
       db.update({ _id: doc._id }, { $set: { sent: true } }, {}, (err) => {
         if (err) console.log(err.message)
         else {
-          //enviarDado(()=>{EXECUTAR COMANDO ABAIXO})
           console.log('Dado enviado.')
         }
+        setTimeout(checkSentStatus(), 3000)
       })
-    } else console.log('Nenhum dado pendente!')
+      ///////////////////////////////////////////////////////////////////////////////////////////
+    } else {
+      console.log('Nenhum dado pendente!')
+    }
   })
 }
 
